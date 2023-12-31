@@ -1,0 +1,101 @@
+#2.查询公司员工工资的最大值，最小值，平均值，总和
+SELECT MAX(salary),MIN(salary),AVG(salary),SUM(salary),SUM(salary)/COUNT(1)
+FROM employees;
+#3.查询各job_id的员工工资的最大值，最小值，平均值，总和
+SELECT job_id,MAX(salary),MIN(salary),SUM(salary),AVG(salary)
+FROM employees
+GROUP BY job_id;
+#4.选择具有各个job_id的员工人数
+SELECT job_id,COUNT(job_id)
+FROM employees
+GROUP BY job_id;
+# 5.查询员工最高工资和最低工资的差距（DIFFERENCE）
+SELECT MAX(salary)-MIN(salary) "DIFFERENCE"
+FROM employees;
+# 6.查询各个管理者手下员工的最低工资，其中最低工资不能低于6000，没有管理者的员工不计算在内
+SELECT MIN(emp.salary)
+FROM employees emp,employees mgr
+WHERE emp.`manager_id`=mgr.`employee_id`
+GROUP BY mgr.`employee_id`;
+
+# 7.查询所有部门的名字，location_id，员工数量和平均工资，并按平均工资降序
+SELECT department_name,location_id,COUNT(1),AVG(salary)
+FROM departments d,employees e
+WHERE d.`department_id`=e.`department_id`
+GROUP BY department_name,location_id
+ORDER BY AVG(salary) DESC;
+# 8.查询每个工种、每个部门的部门名、工种名和最低工资
+SELECT department_name,job_title,MIN(salary)
+FROM employees e,departments d,jobs j
+WHERE e.`department_id`=d.`department_id` AND e.`job_id`=j.`job_id`
+GROUP BY department_name,job_title;
+
+SELECT department_name,job_title,MIN(salary)
+FROM employees e JOIN departments d
+USING(department_id)
+JOIN jobs j
+USING(job_id)
+GROUP BY department_name,job_title;
+
+
+# 1.显示系统时间(注：日期+时间)
+SELECT NOW(),SYSDATE(),CURDATE(),CURTIME(),UTC_DATE(),UTC_TIME() 
+FROM DUAL;
+# 2.查询员工号，姓名，工资，以及工资提高百分之20%后的结果（new salary）
+SELECT employee_id,last_name,salary,salary*1.2 AS"new salary"
+FROM employees;
+# 3.将员工的姓名按首字母排序，并写出姓名的长度（length）
+SELECT last_name,LENGTH(last_name),CHAR_LENGTH(last_name)
+FROM employees
+ORDER BY last_name ASC;
+# 4.查询员工id,last_name,salary，并作为一个列输出，别名为OUT_PUT
+SELECT CONCAT_WS(' ',employee_id,last_name,salary) AS "OUT_PUT"
+FROM employees;
+# 5.查询公司各员工工作的年数、工作的天数，并按工作年数的降序排序
+SELECT LPAD(DATEDIFF(NOW(),hire_date),6," ") "asdadsb",YEAR(NOW())-YEAR(hire_date) "a"
+FROM employees
+ORDER BY a,asdadsb DESC;
+# 6.查询员工姓名，hire_date , department_id，满足以下条件：雇用时间在1997年之后，department_id
+#为80 或 90 或110, commission_pct不为空
+SELECT last_name,hire_date,department_id,hire_date,commission_pct
+FROM employees
+WHERE YEAR(hire_date)>=1997&&department_id IN(80,90,110)&&commission_pct IS NOT NULL;
+# 7.查询公司中入职超过10000天的员工姓名、入职时间
+SELECT last_name,hire_date
+FROM employees e
+WHERE DATEDIFF(NOW(),e.`hire_date`)>10000;
+
+# 8.做一个查询，产生下面的结果
+<last_name> earns <salary> monthly but wants <salary*3>
+SELECT CONCAT_WS(' ',last_name,'earns',salary,'but wnats',salary*3)
+FROM employees
+
+# 9.使用case-when，按照下面的条件：
+job grade
+AD_PRES A
+ST_MAN B
+IT_PROG C
+SA_REP D
+ST_CLERK E
+
+SELECT employee_id,job_id,CASE 
+			   WHEN !STRCMP(job_id,'AD_PRES') THEN 'A'
+			   WHEN !STRCMP(job_id,'ST_MAN') THEN 'B'
+			   WHEN !STRCMP(job_id,"IT_PROG") THEN 'C'
+			   WHEN !STRCMP(job_id,"SA_REP") THEN 'D'
+			   WHEN !STRCMP(job_id,"ST_CLERK") THEN 'E'
+			   ELSE 'F'END
+FROM employees;
+
+SELECT employee_id,job_id,CASE
+			  WHEN job_id='AD_PRES' THEN 'A'
+			  WHEN job_id='ST_MAN' THEN 'B'
+			  WHEN job_id='IT_PROG' THEN 'C'
+			  WHEN job_id='SA_REP' THEN 'D'
+			  WHEN job_id='ST_CLERK' THEN 'E'
+			  ELSE 'F' END
+
+FROM employees;
+SELECT !STRCMP('abv','abv')
+FROM DUAL;
+
